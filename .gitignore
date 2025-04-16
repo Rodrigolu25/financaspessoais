@@ -1,0 +1,16 @@
+# Arquivos do ambiente virtual Python
+venv/
+.env
+
+# Arquivos de banco de dados
+*.db
+*.sqlite
+*.json
+
+# Arquivos de configuração sensíveis
+config.py
+secrets.py
+
+# Cache do Python
+__pycache__/
+*.py[cod]
