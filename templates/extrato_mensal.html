@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extrato Mensal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card-header { background-color: #4e73df; color: white; }
+        .card-resumo { border-left: 5px solid; border-radius: 8px; }
+        .resumo-receita { border-color: #1cc88a; }
+        .resumo-despesa { border-color: #e74a3b; }
+        .resumo-saldo { border-color: #36b9cc; }
+        .valor-positivo { color: #1cc88a; }
+        .valor-negativo { color: #e74a3b; }
+        .table-hover tbody tr:hover { background-color: rgba(78, 115, 223, 0.05); }
+        .badge-mes { font-size: 1rem; background-color: #858796; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-xl-10">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h2 class="m-0 font-weight-bold text-center">Extrato Mensal</h2>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" class="mb-5">
+                            <div class="form-row align-items-center">
+                                <div class="col-md-8">
+                                    <label class="sr-only" for="mes_ano">Mês</label>
+                                    <input type="month" class="form-control form-control-lg" 
+                                           id="mes_ano" name="mes_ano" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-primary btn-lg btn-block">
+                                        <i class="fas fa-search"></i> Consultar
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        {% if mes_ano %}
+                        <div class="d-flex justify-content-center mb-4">
+                            <span class="badge badge-mes p-2">
+                                <i class="fas fa-calendar-alt"></i> {{ mes_ano }}
+                            </span>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-4 mb-3">
+                                <div class="card card-resumo resumo-receita h-100">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="h5 font-weight-bold text-primary mb-1">
+                                                Total Receitas
+                                            </div>
+                                            <div class="h3 mb-0 font-weight-bold text-gray-800 valor-positivo">
+                                                R$ {{ "%.2f"|format(receitas) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card card-resumo resumo-despesa h-100">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="h5 font-weight-bold text-primary mb-1">
+                                                Total Despesas
+                                            </div>
+                                            <div class="h3 mb-0 font-weight-bold text-gray-800 valor-negativo">
+                                                R$ {{ "%.2f"|format(despesas) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card card-resumo resumo-saldo h-100">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="h5 font-weight-bold text-primary mb-1">
+                                                Saldo Final
+                                            </div>
+                                            <div class="h3 mb-0 font-weight-bold text-gray-800 {% if saldo >= 0 %}valor-positivo{% else %}valor-negativo{% endif %}">
+                                                R$ {{ "%.2f"|format(saldo) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Descrição</th>
+                                        <th>Valor</th>
+                                        <th>Tipo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for transacao in transacoes %}
+                                    <tr>
+                                        <td>{{ transacao['data'] }}</td>
+                                        <td>{{ transacao['descricao'] }}</td>
+                                        <td class="{% if transacao['tipo'] == 'receita' %}valor-positivo{% else %}valor-negativo{% endif %}">
+                                            R$ {{ "%.2f"|format(transacao['valor']) }}
+                                        </td>
+                                        <td>
+                                            <span class="badge {% if transacao['tipo'] == 'receita' %}bg-success{% else %}bg-danger{% endif %}">
+                                                {{ transacao['tipo']|capitalize }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                    <a href="{{ url_for('extrato_descricao') }}" class="btn btn-info ml-2">
+                        <i class="fas fa-search"></i> Buscar por Descrição
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Inicializa tooltips -->
+    <script>
+        // Configura a data atual como padrão no campo de data
+        document.getElementById('mes_ano').value = new Date().toISOString().substr(0, 7);
+    </script>
+</body>
+</html>

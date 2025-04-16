@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extrato por Descrição</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .receita { color: #28a745; }
+        .despesa { color: #dc3545; }
+        .card-resumo { border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .card-title { font-weight: 600; }
+        .valor-total { font-size: 1.2rem; font-weight: bold; }
+        .table-hover tbody tr:hover { background-color: rgba(0,0,0,0.02); }
+        .badge-descricao { font-size: 1rem; background-color: #6c757d; }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Extrato por Descrição</h2>
+                        
+                        <form method="POST" class="mb-4">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="descricao" 
+                                       placeholder="Digite parte da descrição" required
+                                       list="descricoes">
+                                <datalist id="descricoes">
+                                    {% for desc in descricoes %}
+                                    <option value="{{ desc }}">
+                                    {% endfor %}
+                                </datalist>
+                                <button class="btn btn-primary" type="submit">Buscar</button>
+                            </div>
+                        </form>
+                        
+                        {% if descricao %}
+                        <div class="d-flex justify-content-center mb-3">
+                            <span class="badge badge-descricao bg-secondary p-2">
+                                Resultados para: "{{ descricao }}"
+                            </span>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-4 mb-3">
+                                <div class="card card-resumo bg-success text-white">
+                                    <div class="card-body text-center">
+                                        <h5>Total Receitas</h5>
+                                        <p class="valor-total">R$ {{ "%.2f"|format(receitas) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card card-resumo bg-danger text-white">
+                                    <div class="card-body text-center">
+                                        <h5>Total Despesas</h5>
+                                        <p class="valor-total">R$ {{ "%.2f"|format(despesas) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card card-resumo {% if saldo >= 0 %}bg-primary{% else %}bg-warning{% endif %} text-white">
+                                    <div class="card-body text-center">
+                                        <h5>Saldo</h5>
+                                        <p class="valor-total">R$ {{ "%.2f"|format(saldo) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Descrição</th>
+                                        <th>Valor</th>
+                                        <th>Tipo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for transacao in transacoes %}
+                                    <tr>
+                                        <td>{{ transacao['data'] }}</td>
+                                        <td>{{ transacao['descricao'] }}</td>
+                                        <td class="{{ transacao['tipo'] }}">
+                                            R$ {{ "%.2f"|format(transacao['valor']) }}
+                                        </td>
+                                        <td>
+                                            <span class="badge {% if transacao['tipo'] == 'receita' %}bg-success{% else %}bg-danger{% endif %}">
+                                                {{ transacao['tipo']|capitalize }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                        Voltar para a página inicial
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
