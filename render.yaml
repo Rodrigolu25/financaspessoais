@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: financas-pessoais
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    env: python
+    python:
+      version: 3.9.13
