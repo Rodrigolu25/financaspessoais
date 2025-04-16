@@ -121,4 +121,5 @@ def extrato_descricao():
     return render_template('extrato_descricao.html', descricoes=descricoes)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 8080)), debug=True)
+    port = int(os.environ.get("PORT", 10000))  # Use 10000 ou qualquer porta disponível
+    app.run(host='0.0.0.0', port=port)
