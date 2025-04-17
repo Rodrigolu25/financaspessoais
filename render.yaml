@@ -1,9 +1,11 @@
 services:
   - type: web
-    name: financas-pessoais
-    runtime: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn --bind 0.0.0.0:10000 app:app
+    name: financas-flask
     env: python
-    python:
-      version: 3.9.13
+    buildCommand: ""
+    startCommand: "python app.py"
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        sync: false
