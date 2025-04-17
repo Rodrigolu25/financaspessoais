@@ -3,227 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finanças Pessoais</title>
-    <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            margin: 20px;
-            line-height: 1.6;
-        }
-        .container { 
-            max-width: 1000px; 
-            margin: 0 auto; 
-            padding: 20px;
-        }
-        .receita { 
-            color: green; 
-        }
-        .despesa { 
-            color: red; 
-        }
-        .positivo { 
-            color: green; 
-            font-weight: bold; 
-        }
-        .negativo { 
-            color: red; 
-            font-weight: bold; 
-        }
-        .saldo { 
-            font-size: 1.2em;
-            margin: 20px 0;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-        }
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin: 20px 0; 
-            box-shadow: 0 2px 3px rgba(0,0,0,0.1);
-        }
-        th, td { 
-            border: 1px solid #ddd; 
-            padding: 12px; 
-            text-align: left; 
-        }
-        th { 
-            background-color: #4CAF50;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        tr:hover {
-            background-color: #e9e9e9;
-        }
-        form { 
-            margin: 20px 0; 
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-        }
-        .form-group { 
-            margin: 15px 0; 
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input, select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1em;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .resumo-mensal {
-            margin: 30px 0;
-        }
-        .acoes {
-            text-align: center;
-        }
-        .btn-extrato {
-            display: inline-block;
-            background-color: #2196F3;
-            color: white;
-            padding: 10px 15px;
-            text-decoration: none;
-            border-radius: 4px;
-            margin: 10px 0;
-        }
-        .btn-extrato:hover {
-            background-color: #0b7dda;
-        }
-    </style>
+    <title>Ganhos e Despesas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Finanças Pessoais</h1>
-        
-        <div class="saldo">
-            <strong>Saldo Atual:</strong> 
-            <span class="{% if saldo >= 0 %}positivo{% else %}negativo{% endif %}">
-                R$ {{ "%.2f"|format(saldo) }}
-            </span>
-        </div>
-        
-        <h2>Adicionar Nova Transação</h2>
-        <form method="POST">
-            <div class="form-group">
-                <label for="descricao">Descrição:</label>
-                <input type="text" id="descricao" name="descricao" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="valor">Valor (R$):</label>
-                <input type="number" id="valor" name="valor" step="0.01" min="0.01" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="tipo">Tipo:</label>
-                <select id="tipo" name="tipo" required>
-                    <option value="">Selecione...</option>
-                    <option value="receita">Receita</option>
-                    <option value="despesa">Despesa</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="data">Data:</label>
-                <input type="date" id="data" name="data">
-                <small>Deixe em branco para usar a data atual</small>
-            </div>
-            
-            <button type="submit">Adicionar Transação</button>
-        </form>
-        
-        <h2>Últimas Transações</h2>
-        {% if transacoes %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Data</th>
-                    <th>Descrição</th>
-                    <th>Valor</th>
-                    <th>Tipo</th>
-                    <th class="acoes">Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for transacao in transacoes|reverse %}
-                <tr>
-                    <td>{{ transacao['data'] }}</td>
-                    <td>{{ transacao['descricao'] }}</td>
-                    <td class="{{ transacao['tipo'] }}">
-                        R$ {{ "%.2f"|format(transacao['valor']) }}
-                    </td>
-                    <td>{{ transacao['tipo']|capitalize }}</td>
-                    <td class="acoes">
-                        <a href="{{ url_for('excluir_transacao', transacao_id=transacao['id']) }}" 
-                           onclick="return confirm('Tem certeza que deseja excluir esta transação?')">
-                           Excluir
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <p>Nenhuma transação cadastrada ainda.</p>
-        {% endif %}
-        
-        <div class="resumo-mensal">
-            <h2>Resumo por Mês</h2>
-            {% if resumo_meses %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Mês/Ano</th>
-                        <th>Receitas</th>
-                        <th>Despesas</th>
-                        <th>Saldo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for mes, valores in resumo_meses.items()|sort(reverse=True) %}
-                    <tr>
-                        <td>{{ mes }}</td>
-                        <td class="receita">R$ {{ "%.2f"|format(valores['receitas']) }}</td>
-                        <td class="despesa">R$ {{ "%.2f"|format(valores['despesas']) }}</td>
-                        <td class="{% if valores['saldo'] >= 0 %}positivo{% else %}negativo{% endif %}">
-                            R$ {{ "%.2f"|format(valores['saldo']) }}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            
-            <a href="{{ url_for('extrato_mensal') }}" class="btn-extrato">
-                Ver Extrato Mensal Detalhado
-            </a>
-            {% else %}
-            <p>Nenhum dado disponível para exibir o resumo mensal.</p>
-            {% endif %}
-        </div>
-    </div>
-
-    <script>
-        // Configura a data atual como padrão no campo de data
-        document.getElementById('data').value = new Date().toISOString().substr(0, 10);
-    </script>
+    <h1>Ganhos e Despesas</h1>
+    <a href="{{ url_for('adicionar') }}">Adicionar Transação</a>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Descrição</th>
+                <th>Valor</th>
+                <th>Tipo</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transacao in transacoes %}
+            <tr>
+                <td>{{ transacao.id }}</td>
+                <td>{{ transacao.descricao }}</td>
+                <td>{{ transacao.valor }}</td>
+                <td>{{ transacao.tipo }}</td>
+                <td>
+                    <a href="{{ url_for('editar', id=transacao.id) }}">Editar</a>
+                    <a href="{{ url_for('deletar', id=transacao.id) }}" onclick="return confirm('Tem certeza que deseja excluir?')">Deletar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>

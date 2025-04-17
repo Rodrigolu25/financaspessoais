@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar Transação</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Adicionar Transação</h1>
+    <form action="{{ url_for('adicionar') }}" method="POST">
+        <label for="descricao">Descrição:</label>
+        <input type="text" name="descricao" id="descricao" required><br><br>
+
+        <label for="valor">Valor:</label>
+        <input type="number" name="valor" id="valor" required><br><br>
+
+        <label for="tipo">Tipo (Ganhos ou Despesas):</label>
+        <input type="text" name="tipo" id="tipo" required><br><br>
+
+        <button type="submit">Adicionar</button>
+    </form>
+    <br>
+    <a href="{{ url_for('index') }}" class="back">Voltar</a>
+</body>
+</html>

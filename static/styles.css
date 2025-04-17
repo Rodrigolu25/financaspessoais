@@ -1,0 +1,243 @@
+/* Reset e Variáveis de Cores Vibrantes */
+:root {
+    --primary: #4361ee;       /* Azul vibrante */
+    --primary-light: #4895ef; /* Azul claro */
+    --secondary: #7209b7;     /* Roxo moderno */
+    --accent: #f72585;        /* Rosa chic */
+    --light: #ffffff;         /* Branco puro */
+    --light-gray: #f8f9fa;    /* Cinza muito claro */
+    --text: #2b2d42;         /* Texto escuro sofisticado */
+    --text-light: #8d99ae;    /* Texto cinza */
+    --success: #4cc9f0;       /* Turquesa */
+    --warning: #ff9e00;       /* Amarelo dourado */
+    --radius: 10px;           /* Bordas arredondadas */
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+    --transition: all 0.25s ease;
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--light-gray);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 2rem;
+  }
+  
+  /* Tipografia Atualizada */
+  h1 {
+    text-align: center;
+    font-size: 2.8rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+    position: relative;
+    display: inline-block;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  h1::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 2px;
+  }
+  
+  /* Tabela Estilizada */
+  table {
+    width: 100%;
+    margin: 2rem 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    background: var(--light);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  
+  th, td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+  }
+  
+  th {
+    background-color: var(--primary);
+    color: var(--light);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  
+  td {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    font-size: 0.95rem;
+  }
+  
+  tr:last-child td {
+    border-bottom: none;
+  }
+  
+  tr:nth-child(even) {
+    background-color: rgba(67, 97, 238, 0.02);
+  }
+  
+  tr:hover {
+    background-color: rgba(67, 97, 238, 0.05);
+  }
+  
+  /* Botões Modernos */
+  button, .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 2px 4px rgba(67, 97, 238, 0.2);
+  }
+  
+  button:hover {
+    background-color: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);
+  }
+  
+  .button-accent {
+    background-color: var(--accent);
+    box-shadow: 0 2px 4px rgba(247, 37, 133, 0.2);
+  }
+  
+  .button-accent:hover {
+    background-color: #ff0676;
+  }
+  
+  /* Links Estilizados */
+  a {
+    color: var(--primary-light);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+    position: relative;
+  }
+  
+  a:hover {
+    color: var(--primary);
+  }
+  
+  a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: var(--primary-light);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+  }
+  
+  a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  
+  /* Formulário Elegante */
+  form {
+    background-color: var(--light);
+    padding: 2rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    max-width: 500px;
+    margin: 2rem auto;
+    transition: var(--transition);
+  }
+  
+  form:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    transition: var(--transition);
+    background-color: var(--light);
+  }
+  
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.1);
+  }
+  
+  /* Cards Modernos */
+  .card {
+    background: var(--light);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    margin-bottom: 1rem;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Responsividade */
+  @media (max-width: 768px) {
+    body {
+      padding: 1rem;
+    }
+    
+    h1 {
+      font-size: 2rem;
+    }
+    
+    table {
+      display: block;
+      overflow-x: auto;
+    }
+    
+    form {
+      padding: 1.5rem;
+    }
+  }
