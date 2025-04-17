@@ -1,72 +1,98 @@
-from flask import Flask, request, render_template, redirect, url_for
+import os
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 
-# Inicializa o aplicativo Flask
+# Criando a aplicação Flask
 app = Flask(__name__)
 
-# Configura o banco de dados SQLite
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ganhos_e_despesas.db'
+# Configurando a chave secreta para sessões (em produção, deve ser uma chave única e segura)
+app.config['SECRET_KEY'] = os.urandom(24)
+
+# Configuração do banco de dados usando a variável de ambiente DATABASE_URL
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+
+# Configuração para não mostrar o aviso de modificações em tempo real no banco de dados
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Inicializa o SQLAlchemy
+# Inicializando o objeto de banco de dados
 db = SQLAlchemy(app)
 
-# Modelo de Transação
+# Definindo o modelo de transações
 class Transacao(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    descricao = db.Column(db.String(150), nullable=False)
+    descricao = db.Column(db.String(120), nullable=False)
     valor = db.Column(db.Float, nullable=False)
-    tipo = db.Column(db.String(50), nullable=False)
+    tipo = db.Column(db.String(10), nullable=False)  # 'ganho' ou 'despesa'
+    data = db.Column(db.DateTime, default=db.func.current_timestamp())
 
-# Rota para a página principal que lista as transações
+    def __repr__(self):
+        return f"<Transacao {self.descricao} - {self.valor}>"
+
+# Página principal
 @app.route('/')
 def index():
-    transacoes = Transacao.query.all()  # Busca todas as transações no banco
+    transacoes = Transacao.query.all()  # Busca todas as transações no banco de dados
     return render_template('index.html', transacoes=transacoes)
 
-# Rota para adicionar uma nova transação
+# Página de adicionar transação
 @app.route('/adicionar', methods=['GET', 'POST'])
 def adicionar():
     if request.method == 'POST':
         descricao = request.form['descricao']
         valor = float(request.form['valor'])
         tipo = request.form['tipo']
-        
+
+        # Criar nova transação
         nova_transacao = Transacao(descricao=descricao, valor=valor, tipo=tipo)
-        db.session.add(nova_transacao)  # Adiciona a nova transação
-        db.session.commit()  # Salva as alterações no banco
-        
-        return redirect(url_for('index'))  # Redireciona de volta para a página principal
+
+        try:
+            db.session.add(nova_transacao)
+            db.session.commit()
+            flash('Transação adicionada com sucesso!', 'success')
+            return redirect(url_for('index'))
+        except:
+            db.session.rollback()  # Em caso de erro, reverte as alterações
+            flash('Ocorreu um erro ao adicionar a transação.', 'error')
+            return redirect(url_for('adicionar'))
 
     return render_template('adicionar.html')
 
-# Rota para editar uma transação existente
+# Página de editar transação
 @app.route('/editar/<int:id>', methods=['GET', 'POST'])
 def editar(id):
     transacao = Transacao.query.get_or_404(id)
-    
+
     if request.method == 'POST':
         transacao.descricao = request.form['descricao']
         transacao.valor = float(request.form['valor'])
         transacao.tipo = request.form['tipo']
-        
-        db.session.commit()  # Salva as alterações no banco
-        return redirect(url_for('index'))  # Redireciona para a página principal
+
+        try:
+            db.session.commit()
+            flash('Transação atualizada com sucesso!', 'success')
+            return redirect(url_for('index'))
+        except:
+            db.session.rollback()
+            flash('Ocorreu um erro ao atualizar a transação.', 'error')
+            return redirect(url_for('editar', id=id))
 
     return render_template('editar.html', transacao=transacao)
 
-# Rota para excluir uma transação
-@app.route('/deletar/<int:id>', methods=['GET'])
-def deletar(id):
+# Página de excluir transação
+@app.route('/excluir/<int:id>', methods=['GET', 'POST'])
+def excluir(id):
     transacao = Transacao.query.get_or_404(id)
-    db.session.delete(transacao)  # Exclui a transação do banco
-    db.session.commit()  # Salva as alterações no banco
-    return redirect(url_for('index'))  # Redireciona para a página principal
 
-# Criar o banco de dados e tabelas, se ainda não existirem
-with app.app_context():
-    db.create_all()
+    try:
+        db.session.delete(transacao)
+        db.session.commit()
+        flash('Transação excluída com sucesso!', 'success')
+        return redirect(url_for('index'))
+    except:
+        db.session.rollback()
+        flash('Ocorreu um erro ao excluir a transação.', 'error')
+        return redirect(url_for('index'))
 
-# Executa o servidor Flask
-if __name__ == "__main__":
+# Rodar o app
+if __name__ == '__main__':
     app.run(debug=True)
